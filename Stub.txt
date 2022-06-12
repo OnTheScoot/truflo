@@ -353,7 +353,7 @@ namespace Program
 
 			public static void Main()
 			{
-                //Extract("Program", Path.GetTempPath(), "Resources", "Newtonsoft.Json.dll");
+                
 				//defendernigger
 				//myholywater
 				//fakeerrorlolnub
