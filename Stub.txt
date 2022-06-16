@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
-namespace WindowsFormsApp1
+namespace Program
 {
 	public class Include
 	{
@@ -353,7 +353,7 @@ namespace WindowsFormsApp1
 
 			public static void Main()
 			{
-                //Extract("WindowsFormsApp1", Path.GetTempPath(), "Resources", "Newtonsoft.Json.dll");
+                //Extract("Program", Path.GetTempPath(), "Resources", "Newtonsoft.Json.dll");
 				//defendernigger
 				//myholywater
 				//fakeerrorlolnub
